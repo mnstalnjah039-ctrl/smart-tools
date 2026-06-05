@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة المعدل الجامعي GPA</title>
+    <style>
+        :root { --primary: #0056b3; --white: #fff; --gray: #e9ecef; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; background: #f4f7f6; }
+        .tool-box { background: var(--white); padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #eee; max-width: 600px; margin: 0 auto; }
+        .tool-box h2 { color: var(--primary); border-bottom: 2px solid var(--gray); padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        select, input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; font-family: inherit; }
+        .row select { flex: 2; }
+        .row input { flex: 1; }
+        .remove-btn { background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
+        .control-btns { display: flex; gap: 10px; margin-top: 15px; }
+        .control-btns button { flex: 1; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #calcBtn { background: var(--primary); color: white; }
+        #addBtn { background: #28a745; color: white; }
+        .result { margin-top: 20px; text-align: center; font-size: 1.4rem; font-weight: bold; display: none; padding: 15px; background: var(--gray); border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="tool-box">
+        <h2>حاسبة المعدل التراكمي (GPA)</h2>
+        <div style="margin-bottom: 15px; text-align: right;">
+            <label>نظام المعدل المستهدف: </label>
+            <select id="gpaScale" onchange="resetGpa()">
+                <option value="4">من 4.0 (النظام العالمي / الأمريكي)</option>
+                <option value="5">من 5.0 (النظام السعودي وبعض الدول العربية)</option>
+            </select>
+        </div>
+        
+        <div id="subjectsContainer">
+            <div class="row">
+                <select class="grade">
+                    <option value="4.0">+A (ممتاز مرتفع)</option>
+                    <option value="3.75">A (ممتاز)</option>
+                    <option value="3.5">+B (جيد جداً مرتفع)</option>
+                    <option value="3.0">B (جيد جداً)</option>
+                    <option value="2.5">+C (جيد مرتفع)</option>
+                    <option value="2.0">C (جيد)</option>
+                    <option value="0.0">F (راسب)</option>
+                </select>
+                <input type="number" class="hours" placeholder="الساعات" min="1" value="3">
+                <button class="remove-btn" onclick="this.parentElement.remove()">X</button>
+            </div>
+        </div>
+
+        <div class="control-btns">
+            <button id="addBtn" onclick="addSubjectRow()">إضافة مادة</button>
+            <button id="calcBtn" onclick="calculateGPA()">احسب المعدل</button>
+        </div>
+
+        <div id="gpaResult" class="result"></div>
+    </div>
+
+    <script>
+        function addSubjectRow() {
+            const container = document.getElementById('subjectsContainer');
+            const newRow = document.createElement('div');
+            newRow.className = 'row';
+            newRow.innerHTML = `
+                <select class="grade">
+                    <option value="4.0">+A (ممتاز مرتفع)</option>
+                    <option value="3.75">A (ممتاز)</option>
+                    <option value="3.5">+B (جيد جداً مرتفع)</option>
+                    <option value="3.0">B (جيد جداً)</option>
+                    <option value="2.5">+C (جيد مرتفع)</option>
+                    <option value="2.0">C (جيد)</option>
+                    <option value="0.0">F (راسب)</option>
+                </select>
+                <input type="number" class="hours" placeholder="الساعات" min="1" value="3">
+                <button class="remove-btn" onclick="this.parentElement.remove()">X</button>
+            `;
+            container.appendChild(newRow);
+        }
+
+        function calculateGPA() {
+            const grades = document.querySelectorAll('.grade');
+            const hours = document.querySelectorAll('.hours');
+            const scale = document.getElementById('gpaScale').value;
+            
+            let totalPoints = 0;
+            let totalHours = 0;
+
+            for(let i=0; i<grades.length; i++) {
+                let h = parseFloat(hours[i].value) || 0;
+                let g = parseFloat(grades[i].value);
+                
+                // تعديل قيم الدرجات الرياضية تلقائياً إذا كان النظام من 5
+                if (scale === "5" && g > 0) {
+                    g += 1.0; 
+                }
+
+                totalPoints += (g * h);
+                totalHours += h;
+            }
+
+            const res = document.getElementById('gpaResult');
+            if(totalHours === 0) { res.style.display="block"; res.innerText="الرجاء ملء الساعات بشكل صحيح"; return; }
+            
+            const finalGpa = (totalPoints / totalHours).toFixed(2);
+            res.style.display = "block";
+            res.innerHTML = `معدلك الفصلي هو: <span style="color:#0056b3;">${finalGpa} / ${scale}.0</span>`;
+        }
+
+        function resetGpa() { document.getElementById('gpaResult').style.display='none'; }
+    </script>
+</body>
+</html>

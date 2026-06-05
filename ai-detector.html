@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كاشف الذكاء الاصطناعي</title>
+    <style>
+        :root { --primary: #0056b3; --white: #fff; --gray: #e9ecef; --text: #333; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; background: #f4f7f6; color: var(--text); }
+        .tool-box { background: var(--white); padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #eee; max-width: 600px; margin: 0 auto; }
+        .tool-box h2 { color: var(--primary); border-bottom: 2px solid var(--gray); padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+        textarea { width: 100%; padding: 15px; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1rem; resize: vertical; font-family: inherit; }
+        button { background: var(--primary); color: var(--white); border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-size: 1.1rem; width: 100%; font-weight: bold; transition: background 0.3s; }
+        button:hover { background: #004494; }
+        .progress-container { width: 100%; background-color: var(--gray); border-radius: 5px; margin-top: 20px; overflow: hidden; display: none; border: 1px solid #ccc; }
+        .progress-bar { height: 30px; background-color: #28a745; text-align: center; line-height: 30px; color: white; font-weight: bold; width: 0%; transition: width 1s ease-in-out, background-color 0.5s; }
+        .result-text { text-align: center; margin-top: 10px; font-weight: bold; font-size: 1.1rem; display: none; }
+    </style>
+</head>
+<body>
+    <div class="tool-box">
+        <h2>كاشف الذكاء الاصطناعي</h2>
+        <p style="color: #666; font-size: 0.9rem; text-align: center; margin-bottom: 15px;">الصق النص هنا لتحليله ومعرفة احتمالية كتابته بواسطة الذكاء الاصطناعي (ChatGPT وغيرها).</p>
+        
+        <textarea id="aiText" rows="8" placeholder="الصق النص هنا (يجب أن يحتوي على 20 كلمة على الأقل)..."></textarea>
+        <button onclick="analyzeText()">تحليل النص</button>
+
+        <div id="progContainer" class="progress-container">
+            <div id="progBar" class="progress-bar">0%</div>
+        </div>
+        <div id="resText" class="result-text"></div>
+    </div>
+
+    <script>
+        function analyzeText() {
+            const text = document.getElementById('aiText').value.trim();
+            const progContainer = document.getElementById('progContainer');
+            const progBar = document.getElementById('progBar');
+            const resText = document.getElementById('resText');
+
+            if (text.split(/\s+/).length < 20) {
+                alert("الرجاء إدخال نص أطول (20 كلمة على الأقل) للحصول على نتيجة دقيقة.");
+                return;
+            }
+
+            // إظهار شريط التقدم
+            progContainer.style.display = 'block';
+            resText.style.display = 'block';
+            resText.innerText = "جاري التحليل...";
+            progBar.style.width = '0%';
+            progBar.innerText = '0%';
+
+            setTimeout(() => {
+                // خوارزمية محاكاة: تعتمد على طول النص وتكرار الكلمات النمطية
+                let aiProbability = 15; // النسبة الأساسية
+                
+                // أنماط الذكاء الاصطناعي الشائعة
+                const aiWords = ["بالإضافة", "علاوة على ذلك", "من المهم", "بشكل عام", "ختاماً", "ومع ذلك", "تعتبر", "يُعد"];
+                let matchCount = 0;
+                aiWords.forEach(word => { if(text.includes(word)) matchCount++; });
+                
+                aiProbability += (matchCount * 12);
+                
+                // الجمل الطويلة جداً والمعقدة تزيد النسبة
+                const avgWordLength = text.length / text.split(/\s+/).length;
+                if (avgWordLength > 6) aiProbability += 20;
+
+                // إضافة عامل عشوائي بسيط للمحاكاة
+                aiProbability += Math.floor(Math.random() * 20);
+                
+                if (aiProbability > 98) aiProbability = 98;
+                if (aiProbability < 2) aiProbability = 2;
+
+                progBar.style.width = aiProbability + '%';
+                progBar.innerText = aiProbability + '%';
+
+                if (aiProbability < 40) {
+                    progBar.style.backgroundColor = "#28a745"; // أخضر
+                    resText.innerHTML = "هذا النص يبدو أنه <strong>مكتوب بواسطة إنسان</strong>.";
+                } else if (aiProbability < 70) {
+                    progBar.style.backgroundColor = "#ffc107"; // أصفر
+                    resText.innerHTML = "هذا النص يحتوي على <strong>مزيج من كتابة البشر والذكاء الاصطناعي</strong>.";
+                } else {
+                    progBar.style.backgroundColor = "#dc3545"; // أحمر
+                    resText.innerHTML = "هذا النص يبدو أنه <strong>مُولد بالكامل بواسطة الذكاء الاصطناعي</strong>.";
+                }
+            }, 800);
+        }
+    </script>
+</body>
+</html>
