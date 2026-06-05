@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة العمر</title>
+    <style>
+        :root { --primary: #0056b3; --white: #fff; --gray: #e9ecef; --text: #333; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; background: #f4f7f6; color: var(--text); }
+        .tool-box { background: var(--white); padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #eee; max-width: 400px; margin: 0 auto; text-align: center; }
+        .tool-box h2 { color: var(--primary); border-bottom: 2px solid var(--gray); padding-bottom: 10px; margin-bottom: 20px; }
+        label { display: block; text-align: right; font-weight: bold; margin-bottom: 8px; }
+        input[type="date"] { width: 100%; padding: 12px; margin-bottom: 1.5rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1rem; font-family: inherit; }
+        button { background: var(--primary); color: var(--white); border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-size: 1.1rem; width: 100%; font-weight: bold; transition: background 0.3s; }
+        button:hover { background: #004494; }
+        .result-box { margin-top: 20px; font-size: 1.2rem; display: none; padding: 15px; border-radius: 5px; font-weight: bold; background: var(--gray); line-height: 1.8; text-align: center; }
+        .result-box span { color: var(--primary); font-size: 1.5rem; }
+    </style>
+</head>
+<body>
+    <div class="tool-box">
+        <h2>حاسبة العمر الدقيقة</h2>
+        <label>أدخل تاريخ ميلادك:</label>
+        <input type="date" id="dobInput">
+        <button onclick="calculateAge()">احسب عمري</button>
+        <div id="ageResult" class="result-box"></div>
+    </div>
+
+    <script>
+        function calculateAge() {
+            const dob = document.getElementById('dobInput').value;
+            if (!dob) return alert("الرجاء إدخال تاريخ ميلاد صحيح.");
+            
+            const birthDate = new Date(dob);
+            const today = new Date();
+            
+            if (birthDate > today) return alert("تاريخ الميلاد لا يمكن أن يكون في المستقبل!");
+
+            let years = today.getFullYear() - birthDate.getFullYear();
+            let months = today.getMonth() - birthDate.getMonth();
+            let days = today.getDate() - birthDate.getDate();
+
+            if (days < 0) {
+                months--;
+                // الحصول على عدد أيام الشهر السابق
+                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            const resBox = document.getElementById('ageResult');
+            resBox.style.display = 'block';
+            resBox.innerHTML = `عمرك هو:<br><span>${years}</span> سنة، <span>${months}</span> شهر، و <span>${days}</span> يوم`;
+        }
+    </script>
+</body>
+</html>
