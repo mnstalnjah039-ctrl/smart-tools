@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد كلمات المرور</title>
+    <style>
+        :root { --primary: #0056b3; --white: #fff; --gray: #e9ecef; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; background: #f4f7f6; }
+        .tool-box { background: var(--white); padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #eee; max-width: 400px; margin: 0 auto; }
+        .tool-box h2 { color: var(--primary); border-bottom: 2px solid var(--gray); padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+        .pass-display { background: var(--gray); padding: 15px; border-radius: 4px; font-size: 1.2rem; font-weight: bold; text-align: center; margin-bottom: 15px; word-break: break-all; border: 1px solid #ddd; letter-spacing: 1px; }
+        .option { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; }
+        button { background: var(--primary); color: var(--white); border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-size: 1.1rem; width: 100%; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #004494; }
+    </style>
+</head>
+<body>
+    <div class="tool-box">
+        <h2>مولد كلمات المرور القوية</h2>
+        <div id="passDisplay" class="pass-display">اضغط على توليد</div>
+        
+        <div class="option">
+            <label>طول الكلمة (<span id="lenVal">12</span> حرف):</label>
+            <input type="range" id="passLength" min="6" max="30" value="12" oninput="document.getElementById('lenVal').innerText=this.value">
+        </div>
+        <div class="option"><label>تضمين أرقام (0-9):</label><input type="checkbox" id="numOpt" checked></div>
+        <div class="option"><label>تضمين رموز وحروف معقدة:</label><input type="checkbox" id="symOpt" checked></div>
+
+        <button onclick="generatePassword()">توليد كلمة مرور</button>
+        <button style="background:#28a745;" onclick="copyPass()">نسخ إلى الحافظة</button>
+    </div>
+
+    <script>
+        function generatePassword() {
+            const length = document.getElementById('passLength').value;
+            const includeNumbers = document.getElementById('numOpt').checked;
+            const includeSymbols = document.getElementById('symOpt').checked;
+
+            let charSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (includeNumbers) charSet += "0123456789";
+            if (includeSymbols) charSet += "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * charSet.length);
+                password += charSet[randomIndex];
+            }
+
+            document.getElementById('passDisplay').innerText = password;
+        }
+        function copyPass() {
+            const pass = document.getElementById('passDisplay').innerText;
+            if(pass === "اضغط على توليد") return;
+            navigator.clipboard.writeText(pass);
+            alert("تم نسخ كلمة المرور بنجاح!");
+        }
+    </script>
+</body>
+</html>
